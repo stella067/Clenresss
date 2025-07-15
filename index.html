@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerenciamento de Clientes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --roxo-claro: #d1b7c7;
+      --azul-gradiente: linear-gradient(to right, #d1b7c7, #8ca4ce);
+      --fundo-caixa: rgba(255, 255, 255, 0.08);
+      --texto-principal: #ffffff;
+      --vinil-marrom: #5a2e2e;
+      --vinil-marrom-claro: #8a4949;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #caa0b7, #748cc1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: var(--texto-principal);
+    }
+
+    .main-container {
+      background-color: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    .form-section {
+      flex: 1;
+      min-width: 320px;
+    }
+
+    .form-section h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      background-color: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 15px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .btn-primary,
+    .btn-search,
+    .btn-update,
+    .btn-delete {
+      background-color: var(--vinil-marrom);
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 15px;
+      font-size: 15px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-search {
+      background-color: var(--vinil-marrom-claro);
+    }
+
+    .btn-primary:hover,
+    .btn-search:hover,
+    .btn-update:hover,
+    .btn-delete:hover {
+      opacity: 0.85;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <!-- Cadastro -->
+    <div class="form-section">
+      <h1>👤 CADASTRO DE CLIENTE</h1>
+      <div class="form-group">
+        <input type="text" id="codigo" placeholder="Código do Cliente" required>
+        <input type="text" id="nome" placeholder="Nome do Cliente" required>
+        <input type="text" id="telefone" placeholder="Telefone" required>
+        <input type="text" id="endereco" placeholder="Endereço" required>
+        <input type="email" id="email" placeholder="E-mail" required>
+        <input type="password" id="senha" placeholder="Senha" required>
+        <input id="cadastrarProduto" type="submit" value="Cadastrar Cliente" class="btn-primary">
+      </div>
+    </div>
+
+    <!-- Gerenciamento -->
+    <div class="form-section">
+      <h1>🔍 GERENCIAMENTO DE CLIENTES</h1>
+      <div class="form-group">
+        <input type="text" id="idProduto" placeholder="Digite o Código" required>
+        <input id="buscarProduto" type="submit" value="Buscar Cliente" class="btn-search">
+        <input type="text" id="dadoProduto" placeholder="Nome">
+        <input type="text" id="dadoCategoria" placeholder="Telefone">
+        <input type="text" id="dadoQuantidade" placeholder="Endereço">
+        <input type="email" id="dadoValor" placeholder="E-mail">
+        <input type="password" id="dadoSenha" placeholder="Senha">
+        <input id="atualizarProduto" type="submit" value="Atualizar Cliente" class="btn-update">
+        <input id="deletarProduto" type="submit" value="Remover Cliente" class="btn-delete">
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase e script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getDatabase, ref, child, get, set, update, remove } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAlNNWN6zmeytGfHwVKC34Vei0g2UDpD8",
+      authDomain: "gaby5555.firebaseapp.com",
+      databaseURL: "https://gaby5555-default-rtdb.firebaseio.com",
+      projectId: "gaby5555",
+      storageBucket: "gaby5555.firebasestorage.app",
+      messagingSenderId: "60126292567",
+      appId: "1:60126292567:web:309dc641ce5c26bb8b5112",
+      measurementId: "G-XLXSHCYYK2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+
+    let codigo = document.getElementById('codigo');
+    let nome = document.getElementById('nome');
+    let telefone = document.getElementById('telefone');
+    let endereco = document.getElementById('endereco');
+    let email = document.getElementById('email');
+    let senha = document.getElementById('senha');
+
+    let idProduto = document.getElementById('idProduto');
+    let dadoProduto = document.getElementById('dadoProduto');
+    let dadoCategoria = document.getElementById('dadoCategoria');
+    let dadoQuantidade = document.getElementById('dadoQuantidade');
+    let dadoValor = document.getElementById('dadoValor');
+    let dadoSenha = document.getElementById('dadoSenha');
+
+    let cadastrarProduto = document.getElementById('cadastrarProduto');
+    let buscarProduto = document.getElementById('buscarProduto');
+    let atualizarProduto = document.getElementById('atualizarProduto');
+    let deletarProduto = document.getElementById('deletarProduto');
+
+    function AddCliente() {
+      set(ref(db, 'Cliente/' + codigo.value), {
+        codigo: codigo.value,
+        nome: nome.value,
+        telefone: telefone.value,
+        endereco: endereco.value,
+        email: email.value,
+        senha: senha.value
+      }).then(() => {
+        codigo.value = nome.value = telefone.value = endereco.value = email.value = senha.value = '';
+        alert("Cliente Cadastrado!");
+      }).catch((error) => {
+        console.log(error);
+        alert('Erro ao cadastrar!');
+      });
+    }
+
+    function PesquisarCliente() {
+      const dbRef = ref(db);
+      get(child(dbRef, 'Cliente/' + idProduto.value)).then((snapshot) => {
+        if (snapshot.exists()) {
+          dadoProduto.value = snapshot.val().nome;
+          dadoCategoria.value = snapshot.val().telefone;
+          dadoQuantidade.value = snapshot.val().endereco;
+          dadoValor.value = snapshot.val().email;
+          dadoSenha.value = snapshot.val().senha;
+          alert('Cliente Localizado!');
+        } else {
+          alert("Cliente não encontrado.");
+        }
+      }).catch((e) => {
+        alert('Erro ao buscar!');
+        console.log(e);
+      });
+    }
+
+    function AtualizarCliente() {
+      update(ref(db, 'Cliente/' + idProduto.value), {
+        nome: dadoProduto.value,
+        telefone: dadoCategoria.value,
+        endereco: dadoQuantidade.value,
+        email: dadoValor.value,
+        senha: dadoSenha.value
+      }).then(() => {
+        alert('Cliente Atualizado!');
+      }).catch((e) => {
+        alert('Erro ao atualizar!');
+        console.log(e);
+      });
+    }
+
+    function DeletarCliente() {
+      remove(ref(db, 'Cliente/' + idProduto.value)).then(() => {
+        idProduto.value = dadoProduto.value = dadoCategoria.value = dadoQuantidade.value = dadoValor.value = dadoSenha.value = '';
+        alert('Cliente Deletado!');
+      });
+    }
+
+    cadastrarProduto.addEventListener('click', AddCliente);
+    buscarProduto.addEventListener('click', PesquisarCliente);
+    atualizarProduto.addEventListener('click', AtualizarCliente);
+    deletarProduto.addEventListener('click', DeletarCliente);
+  </script>
+</body>
+</html>
